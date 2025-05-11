@@ -50,6 +50,10 @@ func AddPoints(a, b Point) Point {
 	return Point{X: a.X + b.X, Y: a.Y + b.Y}
 }
 
+func SubtractPoints(a, b Point) Point {
+	return Point{X: a.X - b.X, Y: a.Y - b.Y}
+}
+
 func Bounds(ps []Point) [2]Point {
 	var minX int
 	var minY int
@@ -118,7 +122,9 @@ func Stringify(ps []Point, blank rune, fill rune) []string {
 	}
 
 	for _, p := range ps {
-		strs[p.Y-bounds[0].Y] = strs[p.Y-bounds[0].Y][:p.X-bounds[0].X] + string(fill) + strs[p.Y-bounds[0].Y][p.X-bounds[0].X+1:]
+		offset := SubtractPoints(p, bounds[0])
+		strs[offset.Y] = strs[offset.Y][:offset.X] + string(fill) +
+			strs[offset.Y][offset.X+1:]
 	}
 
 	return strs
