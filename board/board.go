@@ -1,7 +1,7 @@
 package board
 
 import (
-	"go-calendar-puzzle/geom"
+	"calendar-puzzle/geom"
 )
 
 type PointId int

@@ -3,8 +3,8 @@ package board_test
 import (
 	"testing"
 
-	"go-calendar-puzzle/board"
-	"go-calendar-puzzle/geom"
+	"calendar-puzzle/board"
+	"calendar-puzzle/geom"
 )
 
 func TestNewBoard(t *testing.T) {

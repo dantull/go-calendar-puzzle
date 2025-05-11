@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"go-calendar-puzzle/geom"
+	"calendar-puzzle/geom"
 )
 
 var strVariants = [4]string{
@@ -34,7 +34,17 @@ func TestVariants(t *testing.T) {
 		if len(variant) != len(points) {
 			t.Errorf("Expected variant length %d, got %d", len(points), len(variant))
 		}
-		vstr := strings.Join(geom.Stringify(variant, ' ', '*'), "\n")
+
+		convert := func(p geom.Point) string {
+			for _, point := range variant {
+				if point == p {
+					return string("*")
+				}
+			}
+			return string(" ")
+		}
+
+		vstr := strings.Join(geom.Stringify(variant, convert), "\n")
 
 		if _, ok := strVariantToCount[vstr]; ok {
 			strVariantToCount[vstr]++

@@ -112,47 +112,18 @@ func Variants(s *Shape) [][]Point {
 	return vs
 }
 
-func Stringify(ps []Point, blank rune, fill rune) []string {
+func Stringify(ps []Point, convert func(Point) string) []string {
 	bounds := Bounds(ps)
 	width := bounds[1].X - bounds[0].X + 1
 	height := bounds[1].Y - bounds[0].Y + 1
-
-	pmap := make(map[int]map[int]bool)
-
-	for _, p := range ps {
-		if _, ok := pmap[p.X]; !ok {
-			pmap[p.X] = make(map[int]bool)
-		}
-
-		pmap[p.X][p.Y] = true
-	}
-
-	var convert = func(p Point) string {
-		offset := AddPoints(p, bounds[0])
-		if xmap, ok := pmap[offset.X]; !ok {
-			if _, ok := xmap[offset.Y]; ok {
-				return string(fill)
-			} else {
-				return string(blank)
-			}
-		}
-
-		return string(blank)
-	}
 
 	strs := make([]string, height)
 	for i := range strs {
 		sb := strings.Builder{}
 		for j := 0; j < width; j++ {
-			sb.WriteString(convert(Point{X: j, Y: i}))
+			sb.WriteString(convert(AddPoints(Point{X: j, Y: i}, bounds[0])))
 		}
 		strs[i] = sb.String()
-	}
-
-	for _, p := range ps {
-		offset := SubtractPoints(p, bounds[0])
-		strs[offset.Y] = strs[offset.Y][:offset.X] + string(fill) +
-			strs[offset.Y][offset.X+1:]
 	}
 
 	return strs
