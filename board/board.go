@@ -1,40 +1,37 @@
 package board
 
-import "fmt"
+import (
+	"go-calendar-puzzle/geom"
+)
 
 type PointId int
 
-var directions = [4]Point{
-	{0, 1},  // up
-	{1, 0},  // right
-	{0, -1}, // down
-	{-1, 0}, // left
-}
-
-type Point struct {
-	X int
-	Y int
+var directions = [4]geom.Point{
+	{X: 0, Y: 1},  // up
+	{X: 1, Y: 0},  // right
+	{X: 0, Y: -1}, // down
+	{X: -1, Y: 0}, // left
 }
 
 type Board struct {
 	unfilled map[PointId]bool
 	filled   map[PointId]string
-	all      []Point
-	adder    func(Point, Point) Point
-	encoder  func(Point) PointId
+	all      []geom.Point
+	adder    func(geom.Point, geom.Point) geom.Point
+	encoder  func(geom.Point) PointId
 }
 
-func AddPoints(a, b Point) Point {
-	return Point{a.X + b.X, a.Y + b.Y}
+func AddPoints(a, b geom.Point) geom.Point {
+	return geom.Point{X: a.X + b.X, Y: a.Y + b.Y}
 }
 
 const X_LIMIT = 16
 
-func encodePoint(p Point) PointId {
+func encodePoint(p geom.Point) PointId {
 	return PointId(p.X*X_LIMIT + p.Y)
 }
 
-func makeSet(ps []Point, enc func(Point) PointId) map[PointId]bool {
+func makeSet(ps []geom.Point, enc func(geom.Point) PointId) map[PointId]bool {
 	set := make(map[PointId]bool, len(ps))
 	for _, p := range ps {
 		set[enc(p)] = true
@@ -43,7 +40,7 @@ func makeSet(ps []Point, enc func(Point) PointId) map[PointId]bool {
 	return set
 }
 
-func LabelAt(b *Board, p Point) *string {
+func LabelAt(b *Board, p geom.Point) *string {
 	id := b.encoder(p)
 	if _, ok := b.unfilled[id]; ok {
 		return nil
@@ -54,7 +51,7 @@ func LabelAt(b *Board, p Point) *string {
 	return nil
 }
 
-func FillPoints(b *Board, ps []Point, label string) *func() {
+func FillPoints(b *Board, ps []geom.Point, label string) *func() {
 	eps := make([]PointId, len(ps))
 
 	for i, p := range ps {
@@ -81,8 +78,8 @@ func FillPoints(b *Board, ps []Point, label string) *func() {
 	return &undo
 }
 
-func RemainingPoints(b *Board) []Point {
-	remaining := make([]Point, 0, len(b.unfilled))
+func RemainingPoints(b *Board) []geom.Point {
+	remaining := make([]geom.Point, 0, len(b.unfilled))
 	for id := range b.unfilled {
 		for _, p := range b.all {
 			if b.encoder(p) == id {
@@ -94,7 +91,7 @@ func RemainingPoints(b *Board) []Point {
 	return remaining
 }
 
-func spreadPoints(b *Board, p Point, limit int, accum map[PointId]bool) {
+func spreadPoints(b *Board, p geom.Point, limit int, accum map[PointId]bool) {
 	ep := b.encoder(p)
 	if len(accum) < limit {
 		_, ok := b.unfilled[ep]
@@ -103,7 +100,6 @@ func spreadPoints(b *Board, p Point, limit int, accum map[PointId]bool) {
 			if !ok {
 				accum[ep] = true
 				for _, d := range directions {
-					fmt.Println("test dir: ", d)
 					spreadPoints(b, b.adder(p, d), limit, accum)
 					if len(accum) >= limit {
 						break
@@ -114,13 +110,13 @@ func spreadPoints(b *Board, p Point, limit int, accum map[PointId]bool) {
 	}
 }
 
-func CountFill(b *Board, p Point, limit int) int {
+func CountFill(b *Board, p geom.Point, limit int) int {
 	reached := make(map[PointId]bool)
 	spreadPoints(b, p, limit, reached)
 	return len(reached)
 }
 
-func NewBoard(points []Point) *Board {
+func NewBoard(points []geom.Point) *Board {
 	return &Board{
 		unfilled: makeSet(points, encodePoint),
 		filled:   make(map[PointId]string),

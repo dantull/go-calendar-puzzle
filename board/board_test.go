@@ -4,10 +4,11 @@ import (
 	"testing"
 
 	"go-calendar-puzzle/board"
+	"go-calendar-puzzle/geom"
 )
 
 func TestNewBoard(t *testing.T) {
-	points := []board.Point{
+	points := []geom.Point{
 		{X: 0, Y: 0},
 		{X: 1, Y: 0},
 		{X: 0, Y: 1},
@@ -26,7 +27,7 @@ func TestNewBoard(t *testing.T) {
 }
 
 func TestFillPoints(t *testing.T) {
-	points := []board.Point{
+	points := []geom.Point{
 		{X: 0, Y: 0},
 		{X: 1, Y: 0},
 		{X: 0, Y: 1},
@@ -34,8 +35,8 @@ func TestFillPoints(t *testing.T) {
 	}
 	b := board.NewBoard(points)
 
-	fillA := []board.Point{{X: 0, Y: 0}, {X: 1, Y: 0}}
-	fillB := []board.Point{{X: 1, Y: 1}}
+	fillA := []geom.Point{{X: 0, Y: 0}, {X: 1, Y: 0}}
+	fillB := []geom.Point{{X: 1, Y: 1}}
 
 	cleanupA := board.FillPoints(b, fillA, "A")
 	if cleanupA == nil {
@@ -95,7 +96,7 @@ func TestFillPoints(t *testing.T) {
 }
 
 func TestReachable(t *testing.T) {
-	points := []board.Point{
+	points := []geom.Point{
 		{X: 0, Y: 0},
 		{X: 1, Y: 0},
 		{X: 0, Y: 1},
@@ -103,8 +104,8 @@ func TestReachable(t *testing.T) {
 	}
 	b := board.NewBoard(points)
 
-	fillA := []board.Point{{X: 0, Y: 0}, {X: 1, Y: 0}}
-	fillB := []board.Point{{X: 1, Y: 1}}
+	fillA := []geom.Point{{X: 0, Y: 0}, {X: 1, Y: 0}}
+	fillB := []geom.Point{{X: 1, Y: 1}}
 
 	cleanupA := board.FillPoints(b, fillA, "A")
 	if cleanupA == nil {
