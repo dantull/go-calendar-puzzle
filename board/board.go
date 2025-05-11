@@ -21,10 +21,6 @@ type Board struct {
 	encoder  func(geom.Point) PointId
 }
 
-func AddPoints(a, b geom.Point) geom.Point {
-	return geom.Point{X: a.X + b.X, Y: a.Y + b.Y}
-}
-
 const X_LIMIT = 16
 
 func encodePoint(p geom.Point) PointId {
@@ -121,7 +117,7 @@ func NewBoard(points []geom.Point) *Board {
 		unfilled: makeSet(points, encodePoint),
 		filled:   make(map[PointId]string),
 		all:      points,
-		adder:    AddPoints,
+		adder:    geom.AddPoints,
 		encoder:  encodePoint,
 	}
 }
