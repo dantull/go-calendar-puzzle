@@ -17,13 +17,19 @@ func grid(width int, height int) []geom.Point {
 	return points
 }
 
-func main() {
-	ps := grid(2, 3)
-	b := board.NewBoard(ps)
+func offsetAll(ps []geom.Point, offset geom.Point) []geom.Point {
+	var offsetPoints []geom.Point
+	for _, p := range ps {
+		offsetPoints = append(offsetPoints, geom.AddPoints(p, offset))
+	}
+	return offsetPoints
+}
 
-	c := board.FillPoints(b, []geom.Point{{X: 0, Y: 0}, {X: 1, Y: 0}}, "A")
-	d := board.FillPoints(b, []geom.Point{{X: 0, Y: 1}, {X: 1, Y: 1}}, "B")
-	e := board.FillPoints(b, []geom.Point{{X: 0, Y: 0}, {X: 0, Y: 1}}, "C")
+func main() {
+	width := 6
+	height := 4
+	ps := grid(width, height)
+	b := board.NewBoard(ps)
 
 	var boardAt = func(p geom.Point) string {
 		if label := board.LabelAt(b, p); label != nil {
@@ -38,25 +44,26 @@ func main() {
 		fmt.Println()
 	}
 
-	dumpBoard()
-
-	fmt.Printf("%+v\n", board.RemainingPoints(b))
-
-	if c != nil {
-		(*c)()
+	shape := []geom.Point{
+		{X: 0, Y: 0},
+		{X: 1, Y: 0},
+		{X: 0, Y: 1},
 	}
 
-	dumpBoard()
+	undos := make([]func(), 0)
 
-	if d != nil {
-		(*d)()
+	labels := []string{"A", "B", "C"}
+
+	for i, label := range labels {
+		r := board.FillPoints(b, offsetAll(shape, geom.Point{X: i, Y: i}), label)
+		if r != nil {
+			undos = append(undos, *r)
+		}
+		dumpBoard()
 	}
 
-	dumpBoard()
-
-	if e == nil {
-		fmt.Println("e is nil")
-	} else {
-		(*e)()
+	for _, u := range undos {
+		u()
+		dumpBoard()
 	}
 }
