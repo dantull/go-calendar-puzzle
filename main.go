@@ -53,7 +53,7 @@ func main() {
 
 	undos := make([]func(), 0)
 
-	labels := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"}
+	labels := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"}
 
 	variants := geom.Variants(geom.NewShape(true, 4, shapePoints))
 
@@ -66,7 +66,7 @@ func main() {
 		w := rand.Intn(width - 1)
 		v := rand.Intn(len(variants))
 
-		r := board.FillPoints(b, offsetAll(variants[v], geom.Point{X: h, Y: w}), labels[len(undos)])
+		r := board.FillPoints(b, geom.OffsetAll(variants[v], geom.Point{X: w, Y: h}), labels[len(undos)])
 		if r != nil {
 			undos = append(undos, *r)
 			dumpBoard()
