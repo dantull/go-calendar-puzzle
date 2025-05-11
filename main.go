@@ -3,14 +3,14 @@ package main
 import (
 	"calendar-puzzle/board"
 	"calendar-puzzle/geom"
+	"calendar-puzzle/solver"
 	"fmt"
-	"math/rand"
 	"strings"
 )
 
 func main() {
-	width := 12
-	height := 8
+	width := 6
+	height := 4
 	ps := geom.Grid(width, height)
 	b := board.NewBoard(ps)
 
@@ -33,30 +33,29 @@ func main() {
 		{X: 0, Y: 1},
 	}
 
-	undos := make([]func(), 0)
+	labels := []string{"A", "B", "C", "D", "E", "F", "G", "H"}
 
-	labels := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"}
-
-	variants := geom.Variants(geom.NewShape(true, 4, shapePoints))
-
-	for {
-		if len(undos) == len(labels) {
-			break
-		}
-
-		h := rand.Intn(height - 1)
-		w := rand.Intn(width - 1)
-		v := rand.Intn(len(variants))
-
-		r := board.FillPoints(b, geom.OffsetAll(variants[v], geom.Point{X: w, Y: h}), labels[len(undos)])
-		if r != nil {
-			undos = append(undos, *r)
-			dumpBoard()
-		}
+	labeledShapes := make(map[string]geom.Shape, len(labels))
+	for _, label := range labels {
+		labeledShapes[label] = *geom.NewShape(true, 4, shapePoints)
 	}
 
-	for _, u := range undos {
-		u()
-		dumpBoard()
+	solverStepper := solver.CreateSolver(b, labeledShapes, 3)
+
+	done := false
+
+	for {
+		more := solverStepper(func(inspector solver.Inspector, event solver.Event) {
+
+			if event.Kind == "solved" {
+				dumpBoard()
+				fmt.Println("Solved!")
+				done = true
+			}
+		})
+
+		if !more || done {
+			break
+		}
 	}
 }
