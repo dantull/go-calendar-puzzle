@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	width := 6
-	height := 4
+	width := 8
+	height := 6
 	ps := geom.Grid(width, height)
 	b := board.NewBoard(ps)
 
@@ -33,7 +33,7 @@ func main() {
 		{X: 0, Y: 1},
 	}
 
-	labels := []string{"A", "B", "C", "D", "E", "F", "G", "H"}
+	labels := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"}
 
 	labeledShapes := make(map[string]geom.Shape, len(labels))
 	for _, label := range labels {
