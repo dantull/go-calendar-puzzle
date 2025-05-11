@@ -7,15 +7,18 @@ import (
 	"strings"
 )
 
-func main() {
-	ps := []geom.Point{
-		{X: 0, Y: 0},
-		{X: 0, Y: 1},
-		{X: 0, Y: 2},
-		{X: 1, Y: 0},
-		{X: 1, Y: 1},
-		{X: 1, Y: 2},
+func grid(width int, height int) []geom.Point {
+	var points []geom.Point
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			points = append(points, geom.Point{X: x, Y: y})
+		}
 	}
+	return points
+}
+
+func main() {
+	ps := grid(2, 3)
 	b := board.NewBoard(ps)
 
 	c := board.FillPoints(b, []geom.Point{{X: 0, Y: 0}, {X: 1, Y: 0}}, "A")
