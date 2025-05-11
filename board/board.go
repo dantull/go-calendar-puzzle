@@ -76,12 +76,10 @@ func FillPoints(b *Board, ps []geom.Point, label string) *func() {
 
 func RemainingPoints(b *Board) []geom.Point {
 	remaining := make([]geom.Point, 0, len(b.unfilled))
-	for id := range b.unfilled {
-		for _, p := range b.all {
-			if b.encoder(p) == id {
-				remaining = append(remaining, p)
-				break
-			}
+	for _, p := range b.all {
+		id := b.encoder(p)
+		if _, ok := b.unfilled[id]; ok {
+			remaining = append(remaining, p)
 		}
 	}
 	return remaining
