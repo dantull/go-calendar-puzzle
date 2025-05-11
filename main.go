@@ -8,28 +8,10 @@ import (
 	"strings"
 )
 
-func grid(width int, height int) []geom.Point {
-	var points []geom.Point
-	for y := 0; y < height; y++ {
-		for x := 0; x < width; x++ {
-			points = append(points, geom.Point{X: x, Y: y})
-		}
-	}
-	return points
-}
-
-func offsetAll(ps []geom.Point, offset geom.Point) []geom.Point {
-	var offsetPoints []geom.Point
-	for _, p := range ps {
-		offsetPoints = append(offsetPoints, geom.AddPoints(p, offset))
-	}
-	return offsetPoints
-}
-
 func main() {
 	width := 12
 	height := 8
-	ps := grid(width, height)
+	ps := geom.Grid(width, height)
 	b := board.NewBoard(ps)
 
 	var boardAt = func(p geom.Point) string {

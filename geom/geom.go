@@ -128,3 +128,21 @@ func Stringify(ps []Point, convert func(Point) string) []string {
 
 	return strs
 }
+
+func Grid(width int, height int) []Point {
+	var points []Point
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			points = append(points, Point{X: x, Y: y})
+		}
+	}
+	return points
+}
+
+func OffsetAll(ps []Point, offset Point) []Point {
+	var offsetPoints []Point
+	for _, p := range ps {
+		offsetPoints = append(offsetPoints, AddPoints(p, offset))
+	}
+	return offsetPoints
+}
