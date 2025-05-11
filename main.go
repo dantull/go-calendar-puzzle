@@ -37,7 +37,7 @@ func main() {
 
 	labeledShapes := make(map[string]geom.Shape, len(labels))
 	for _, label := range labels {
-		labeledShapes[label] = *geom.NewShape(true, 4, shapePoints)
+		labeledShapes[label] = *geom.NewShape(true, 3, shapePoints)
 	}
 
 	solverStepper := solver.CreateSolver(b, labeledShapes, 3)

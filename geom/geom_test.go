@@ -16,7 +16,7 @@ var strVariants = [4]string{
 
 func TestVariants(t *testing.T) {
 	points := []geom.Point{{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 0, Y: 1}}
-	shape := geom.NewShape(true, 4, points)
+	shape := geom.NewShape(true, 3, points)
 
 	variants := geom.Variants(shape)
 

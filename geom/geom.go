@@ -100,7 +100,8 @@ func Variants(s *Shape) [][]Point {
 	vs := make([][]Point, 0, s.rotations*len(flips))
 
 	for _, flip := range flips {
-		for _, rotate := range rotates[:s.rotations] {
+		for i := 0; i <= s.rotations; i++ {
+			rotate := rotates[i%4]
 			v := make([]Point, len(s.points))
 			for i, p := range s.points {
 				v[i] = rotate(flip(p))
