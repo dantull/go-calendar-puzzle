@@ -4,6 +4,7 @@ import (
 	"calendar-puzzle/board"
 	"calendar-puzzle/geom"
 	"fmt"
+	"math/rand"
 	"strings"
 )
 
@@ -26,8 +27,8 @@ func offsetAll(ps []geom.Point, offset geom.Point) []geom.Point {
 }
 
 func main() {
-	width := 6
-	height := 4
+	width := 12
+	height := 8
 	ps := grid(width, height)
 	b := board.NewBoard(ps)
 
@@ -52,14 +53,17 @@ func main() {
 
 	undos := make([]func(), 0)
 
-	labels := []string{"A", "B", "C"}
+	labels := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"}
 
-	for i, label := range labels {
-		r := board.FillPoints(b, offsetAll(shape, geom.Point{X: i, Y: i}), label)
+	for _, label := range labels {
+		h := rand.Intn(height - 1)
+		w := rand.Intn(width - 1)
+
+		r := board.FillPoints(b, offsetAll(shape, geom.Point{X: h, Y: w}), label)
 		if r != nil {
 			undos = append(undos, *r)
+			dumpBoard()
 		}
-		dumpBoard()
 	}
 
 	for _, u := range undos {
