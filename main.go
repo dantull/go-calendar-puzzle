@@ -9,16 +9,25 @@ import (
 )
 
 func main() {
-	width := 8
-	height := 6
-	ps := geom.Grid(width, height)
+	width := 6
+	height := 7
+	ps := append(geom.Grid(width, height), geom.Point{X: 6, Y: 2}, geom.Point{X: 6, Y: 3},
+		geom.Point{X: 6, Y: 4}, geom.Point{X: 6, Y: 5}, geom.Point{X: 6, Y: 6},
+		geom.Point{X: 6, Y: 7}, geom.Point{X: 5, Y: 7}, geom.Point{X: 4, Y: 7})
+
 	b := board.NewBoard(ps)
+	board.FillPoints(b, []geom.Point{{X: 4, Y: 0}, {X: 3, Y: 3}, {X: 3, Y: 6}}, "X")
 
 	var boardAt = func(p geom.Point) string {
 		if label := board.LabelAt(b, p); label != nil {
 			return *label
 		}
-		return "-"
+		for _, pe := range ps {
+			if pe == p {
+				return "-"
+			}
+		}
+		return " "
 	}
 
 	var dumpBoard = func() {
@@ -27,17 +36,29 @@ func main() {
 		fmt.Println()
 	}
 
-	shapePoints := []geom.Point{
-		{X: 0, Y: 0},
-		{X: 1, Y: 0},
-		{X: 0, Y: 1},
-	}
+	dumpBoard()
 
-	labels := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"}
-
-	labeledShapes := make(map[string]geom.Shape, len(labels))
-	for _, label := range labels {
-		labeledShapes[label] = *geom.NewShape(true, 3, shapePoints)
+	labeledShapes := map[string]geom.Shape{
+		"I": *geom.NewShape(false, 1, []geom.Point{
+			{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 3, Y: 0}}),
+		"L": *geom.NewShape(true, 3, []geom.Point{
+			{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 0, Y: 1}}),
+		"S": *geom.NewShape(true, 1, []geom.Point{
+			{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 1, Y: 1}, {X: 2, Y: 1}}),
+		"J": *geom.NewShape(true, 3, []geom.Point{
+			{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 3, Y: 0}, {X: 0, Y: 1}}),
+		"N": *geom.NewShape(true, 3, []geom.Point{
+			{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 2, Y: 1}, {X: 3, Y: 1}}),
+		"U": *geom.NewShape(false, 3, []geom.Point{
+			{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 0, Y: 1}, {X: 2, Y: 1}}),
+		"T": *geom.NewShape(false, 3, []geom.Point{
+			{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 1, Y: 1}, {X: 1, Y: 2}}),
+		"P": *geom.NewShape(true, 3, []geom.Point{
+			{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 0, Y: 1}, {X: 1, Y: 1}}),
+		"V": *geom.NewShape(false, 3, []geom.Point{
+			{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 0, Y: 1}, {X: 1, Y: 2}}),
+		"Z": *geom.NewShape(true, 1, []geom.Point{
+			{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 1, Y: 1}, {X: 1, Y: 2}, {X: 2, Y: 2}}),
 	}
 
 	solverStepper := solver.CreateSolver(b, labeledShapes, 3)
