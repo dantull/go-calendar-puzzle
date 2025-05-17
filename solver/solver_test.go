@@ -42,6 +42,36 @@ func TestTrivialSolve(t *testing.T) {
 	}
 }
 
+func TestFlipSolve(t *testing.T) {
+	shape_ps := []geom.Point{
+		{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 0, Y: 1}}
+
+	board_ps := []geom.Point{
+		{X: 1, Y: 0}, {X: 0, Y: 0}, {X: 1, Y: 1}}
+
+	b := board.NewBoard(board_ps)
+	shape := geom.NewShape(true, 3, shape_ps)
+
+	stepper := solver.CreateSolver(b, map[string]geom.Shape{"*": *shape}, 3)
+
+	solved := false
+	for {
+		more := stepper(func(inspector solver.Inspector, event solver.Event) {
+			if event.Kind == "solved" {
+				solved = true
+			}
+		})
+
+		if !more {
+			break
+		}
+	}
+
+	if !solved {
+		t.Errorf("Expected to solve the board, but it was not solved")
+	}
+}
+
 type SolverCase struct {
 	name      string
 	chiral    bool

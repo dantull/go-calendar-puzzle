@@ -67,15 +67,26 @@ func main() {
 		placed := false
 
 		for _, v := range vs {
+			if verbose {
+				lines := geom.Stringify(v, func(p geom.Point) string {
+					for _, pv := range v {
+						if p == pv {
+							return label
+						}
+					}
+
+					return " "
+				})
+				for _, s := range lines {
+					fmt.Printf("%s\n", s)
+				}
+				fmt.Println()
+			}
 			remove := board.FillPoints(b, v, label)
 
 			if remove != nil {
 				placed = true
-				if verbose {
-					dumpBoard()
-				}
 				(*remove)()
-				break
 			}
 		}
 		if !placed {

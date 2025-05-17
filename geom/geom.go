@@ -18,7 +18,7 @@ type Shape struct {
 type Mapper func(Point) Point
 
 func flipPoint(p Point) Point {
-	return Point{X: p.Y, Y: -p.X}
+	return Point{X: -p.X, Y: p.Y}
 }
 
 func identity(p Point) Point {
