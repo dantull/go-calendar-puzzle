@@ -41,3 +41,74 @@ func TestTrivialSolve(t *testing.T) {
 		t.Errorf("Expected one call to the callback, got %d", calls)
 	}
 }
+
+type SolverCase struct {
+	name      string
+	chiral    bool
+	rotations int
+	events    []string
+}
+
+func TestSolver(t *testing.T) {
+	cases := []SolverCase{
+		{
+			name:      "impossible",
+			rotations: 0,
+			chiral:    false,
+			events:    []string{"failed"},
+		},
+		{
+			name:      "rotation",
+			rotations: 1,
+			chiral:    false,
+			events:    []string{"solved"},
+		},
+		{
+			name:      "extra rotations",
+			rotations: 3,
+			chiral:    false,
+			events:    []string{"solved", "solved"},
+		},
+		{
+			name:      "flip",
+			rotations: 1,
+			chiral:    true,
+			events:    []string{"solved", "solved"},
+		},
+		{
+			name:      "all rotations and flip",
+			rotations: 3,
+			chiral:    true,
+			events:    []string{"solved", "solved", "solved", "solved"},
+		},
+	}
+
+	p := geom.Grid(1, 2)
+	b := board.NewBoard(geom.Grid(2, 1))
+
+	for _, c := range cases {
+		shape := geom.NewShape(c.chiral, c.rotations, p)
+		stepper := solver.CreateSolver(b, map[string]geom.Shape{"*": *shape}, 2)
+		events := make([]string, 0)
+
+		for {
+			more := stepper(func(inspector solver.Inspector, event solver.Event) {
+				events = append(events, event.Kind)
+			})
+
+			if !more {
+				break
+			}
+		}
+
+		if len(events) != len(c.events) {
+			t.Errorf("Expected %d events, got %d", len(c.events), len(events))
+		}
+
+		for i, event := range events {
+			if event != c.events[i] {
+				t.Errorf("Expected event %d to be '%s', got '%s'", i, c.events[i], event)
+			}
+		}
+	}
+}
