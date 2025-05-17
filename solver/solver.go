@@ -84,11 +84,18 @@ func CreateSolver(b *board.Board, labeledShapes map[string]geom.Shape, minSize i
 		keys = append(keys, k)
 	}
 
+	allVariants := make(map[string][][]geom.Point, len(labeledShapes))
+
+	for l, s := range labeledShapes {
+		vs := geom.Variants(&s)
+		allVariants[l] = vs
+	}
+
 	var nextShape = func() ShapeState {
 		label := keys[len(stack)]
 		s := labeledShapes[label]
 
-		return newState(&s, label, geom.Variants(&s), board.RemainingPoints(b))
+		return newState(&s, label, allVariants[label], board.RemainingPoints(b))
 	}
 
 	if len(labeledShapes) > 0 {
