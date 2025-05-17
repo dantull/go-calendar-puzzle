@@ -68,6 +68,7 @@ func neverPlaced(s *ShapeState) bool {
 
 type Event struct {
 	Kind  string
+	Label string
 	shape *geom.Shape
 }
 
@@ -106,7 +107,7 @@ func CreateSolver(b *board.Board, labeledShapes map[string]geom.Shape, minSize i
 
 		if !more {
 			if neverPlaced(shapeState) {
-				callback(nil, Event{Kind: "failed", shape: shapeState.shape})
+				callback(nil, Event{Kind: "failed", Label: shapeState.label, shape: shapeState.shape})
 			}
 
 			stack = stack[:len(stack)-1]
@@ -120,7 +121,7 @@ func CreateSolver(b *board.Board, labeledShapes map[string]geom.Shape, minSize i
 					event = "solved"
 				}
 
-				callback(nil, Event{Kind: event, shape: shapeState.shape})
+				callback(nil, Event{Kind: event, Label: shapeState.label, shape: shapeState.shape})
 
 				if !solved {
 					ns := nextShape()

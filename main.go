@@ -99,7 +99,7 @@ func main() {
 				done = true
 			} else if verbose {
 				dumpBoard()
-				fmt.Printf("Event: %s\n", event.Kind)
+				fmt.Printf("Event: %s (%s)\n", event.Kind, event.Label)
 			}
 		})
 
