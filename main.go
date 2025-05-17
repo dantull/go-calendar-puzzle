@@ -92,6 +92,8 @@ func main() {
 
 	flag.Parse()
 
+	origin := geom.Point{X: 0, Y: 0}
+
 	// try to place each shape in position 0, 0
 	for label, shape := range labeledShapes {
 		vs := geom.Variants(&shape)
@@ -113,7 +115,7 @@ func main() {
 				}
 				fmt.Println()
 			}
-			remove := board.FillPoints(b, v, label)
+			remove := board.FillPoints(b, &v, origin, label)
 
 			if remove != nil {
 				placed = true
@@ -132,7 +134,7 @@ func main() {
 		fills = append(fills, geom.Point{X: x, Y: y})
 	}
 
-	board.FillPoints(b, fills, "*")
+	board.FillPoints(b, &fills, geom.Point{X: 0, Y: 0}, "*")
 	dumpBoard()
 
 	solverStepper := solver.CreateSolver(b, labeledShapes, 4)

@@ -26,6 +26,8 @@ func TestNewBoard(t *testing.T) {
 	}
 }
 
+var origin = geom.Point{X: 0, Y: 0}
+
 func TestFillPoints(t *testing.T) {
 	points := []geom.Point{
 		{X: 0, Y: 0},
@@ -38,7 +40,7 @@ func TestFillPoints(t *testing.T) {
 	fillA := []geom.Point{{X: 0, Y: 0}, {X: 1, Y: 0}}
 	fillB := []geom.Point{{X: 1, Y: 1}}
 
-	cleanupA := board.FillPoints(b, fillA, "A")
+	cleanupA := board.FillPoints(b, &fillA, origin, "A")
 	if cleanupA == nil {
 		t.Fatal("Expected non-nil cleanup function")
 	}
@@ -47,7 +49,7 @@ func TestFillPoints(t *testing.T) {
 		t.Errorf("Expected 2 unfilled points, got %d", len(board.RemainingPoints(b)))
 	}
 
-	cleanupB := board.FillPoints(b, fillB, "B")
+	cleanupB := board.FillPoints(b, &fillB, origin, "B")
 	if cleanupB == nil {
 		t.Fatal("Expected non-nil cleanup function")
 	}
@@ -56,7 +58,7 @@ func TestFillPoints(t *testing.T) {
 		t.Errorf("Expected 1 unfilled point, got %d", len(board.RemainingPoints(b)))
 	}
 
-	if board.FillPoints(b, fillA, "X") != nil {
+	if board.FillPoints(b, &fillA, origin, "X") != nil {
 		t.Error("Expected nil cleanup function for overlapping fill")
 	}
 
@@ -107,7 +109,7 @@ func TestReachable(t *testing.T) {
 	fillA := []geom.Point{{X: 0, Y: 0}, {X: 1, Y: 0}}
 	fillB := []geom.Point{{X: 1, Y: 1}}
 
-	cleanupA := board.FillPoints(b, fillA, "A")
+	cleanupA := board.FillPoints(b, &fillA, origin, "A")
 	if cleanupA == nil {
 		t.Fatal("Expected non-nil cleanup function")
 	}
@@ -120,7 +122,7 @@ func TestReachable(t *testing.T) {
 		t.Errorf("Expected 2 reachable points from fillB[0]")
 	}
 
-	cleanupB := board.FillPoints(b, fillB, "B")
+	cleanupB := board.FillPoints(b, &fillB, origin, "B")
 	if cleanupB == nil {
 		t.Fatal("Expected non-nil cleanup function")
 	}

@@ -37,8 +37,7 @@ func stepState(s *ShapeState, b *board.Board, minSize int) bool {
 	}
 
 	if s.variantIndex < len(s.baseVariants) {
-		v := geom.OffsetAll(s.baseVariants[s.variantIndex], s.points[s.pointIndex])
-		s.remove = board.FillPoints(b, v, s.label)
+		s.remove = board.FillPoints(b, &s.baseVariants[s.variantIndex], s.points[s.pointIndex], s.label)
 
 		if s.remove != nil {
 			s.places++

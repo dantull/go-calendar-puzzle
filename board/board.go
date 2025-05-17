@@ -47,11 +47,11 @@ func LabelAt(b *Board, p geom.Point) *string {
 	return nil
 }
 
-func FillPoints(b *Board, ps []geom.Point, label string) *func() {
-	eps := make([]PointId, len(ps))
+func FillPoints(b *Board, ps *[]geom.Point, offset geom.Point, label string) *func() {
+	eps := make([]PointId, len(*ps))
 
-	for i, p := range ps {
-		id := b.encoder(p)
+	for i, p := range *ps {
+		id := b.encoder(geom.AddPoints(p, offset))
 		if _, ok := b.unfilled[id]; ok {
 			eps[i] = id
 		} else {

@@ -139,11 +139,3 @@ func Grid(width int, height int) []Point {
 	}
 	return points
 }
-
-func OffsetAll(ps []Point, offset Point) []Point {
-	var offsetPoints []Point
-	for _, p := range ps {
-		offsetPoints = append(offsetPoints, AddPoints(p, offset))
-	}
-	return offsetPoints
-}
