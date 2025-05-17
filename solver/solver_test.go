@@ -49,7 +49,7 @@ type SolverCase struct {
 	events    []string
 }
 
-func TestSolver(t *testing.T) {
+func TestBasicSolverCases(t *testing.T) {
 	cases := []SolverCase{
 		{
 			name:      "impossible",
@@ -109,6 +109,37 @@ func TestSolver(t *testing.T) {
 			if event != c.events[i] {
 				t.Errorf("Expected event %d to be '%s', got '%s'", i, c.events[i], event)
 			}
+		}
+	}
+}
+
+func TestSolverCase(t *testing.T) {
+	ps := geom.Grid(2, 3)
+	b := board.NewBoard(ps)
+	shape := geom.NewShape(false, 3, []geom.Point{
+		{X: 0, Y: 0}, {X: 0, Y: 1}, {X: 1, Y: 0}})
+
+	stepper := solver.CreateSolver(b, map[string]geom.Shape{"x": *shape, "o": *shape}, 2)
+
+	counts := map[string]int{
+		"failed": 4,
+		"placed": 8,
+		"solved": 4,
+	}
+
+	for {
+		more := stepper(func(inspector solver.Inspector, event solver.Event) {
+			counts[event.Kind]--
+		})
+
+		if !more {
+			break
+		}
+	}
+
+	for k, v := range counts {
+		if v != 0 {
+			t.Errorf("Expected all counts to be 0, got %d for %s", v, k)
 		}
 	}
 }
