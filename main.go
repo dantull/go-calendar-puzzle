@@ -6,6 +6,9 @@ import (
 	"calendar-puzzle/solver"
 	"flag"
 	"fmt"
+	"log"
+	"os"
+	"runtime/pprof"
 	"strings"
 )
 
@@ -23,6 +26,18 @@ func parsePoint(arg string) (int, int) {
 }
 
 func main() {
+	var cpuprofile = flag.Bool("c", true, "write cpu profile to file")
+
+	if *cpuprofile {
+		f, err := os.Create("profile")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
+
 	width := 6
 	height := 7
 	ps := append(geom.Grid(width, height), geom.Point{X: 6, Y: 2}, geom.Point{X: 6, Y: 3},
@@ -73,7 +88,7 @@ func main() {
 	}
 
 	verbose := flag.Bool("v", false, "verbose output")
-	multi := flag.Bool("m", false, "multiple solutions")
+	multi := flag.Int("m", 1, "multiple solutions")
 
 	flag.Parse()
 
@@ -123,13 +138,15 @@ func main() {
 	solverStepper := solver.CreateSolver(b, labeledShapes, 4)
 
 	done := false
+	tofind := *multi
 
 	for {
 		more := solverStepper(func(inspector solver.Inspector, event solver.Event) {
 			if event.Kind == "solved" {
 				dumpBoard()
 				fmt.Println("Solved!")
-				done = !*multi
+				tofind--
+				done = tofind <= 0
 			} else if *verbose {
 				dumpBoard()
 				fmt.Printf("Event: %s (%s)\n", event.Kind, event.Label)
