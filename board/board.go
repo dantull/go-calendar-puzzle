@@ -14,54 +14,47 @@ var directions = [4]geom.Point{
 }
 
 type Board struct {
-	unfilled map[PointId]bool
-	filled   map[PointId]string
+	unfilled map[geom.Point]bool
+	filled   map[geom.Point]string
 	all      []geom.Point
 	adder    func(geom.Point, geom.Point) geom.Point
-	encoder  func(geom.Point) PointId
 }
 
-const X_LIMIT = 16
-
-func encodePoint(p geom.Point) PointId {
-	return PointId(p.X*X_LIMIT + p.Y)
-}
-
-func makeSet(ps []geom.Point, enc func(geom.Point) PointId) map[PointId]bool {
-	set := make(map[PointId]bool, len(ps))
+func makeSet(ps []geom.Point) map[geom.Point]bool {
+	set := make(map[geom.Point]bool, len(ps))
 	for _, p := range ps {
-		set[enc(p)] = true
+		set[p] = true
 	}
 
 	return set
 }
 
 func LabelAt(b *Board, p geom.Point) *string {
-	id := b.encoder(p)
-	if _, ok := b.unfilled[id]; ok {
+	if _, ok := b.unfilled[p]; ok {
 		return nil
 	}
-	if label, ok := b.filled[id]; ok {
+	if label, ok := b.filled[p]; ok {
 		return &label
 	}
 	return nil
 }
 
 func FillPoints(b *Board, ps *[]geom.Point, offset geom.Point, label string) *func() {
-	eps := make([]PointId, len(*ps))
+	eps := make([]geom.Point, len(*ps))
 
 	for i, p := range *ps {
-		id := b.encoder(geom.AddPoints(p, offset))
-		if _, ok := b.unfilled[id]; ok {
-			eps[i] = id
+		p = b.adder(p, offset)
+		eps[i] = p
+		if _, ok := b.unfilled[p]; ok {
+			eps[i] = p
 		} else {
 			return nil
 		}
 	}
 
-	for _, id := range eps {
-		b.filled[id] = label
-		delete(b.unfilled, id)
+	for _, p := range eps {
+		b.filled[p] = label
+		delete(b.unfilled, p)
 	}
 
 	undo := func() {
@@ -77,22 +70,20 @@ func FillPoints(b *Board, ps *[]geom.Point, offset geom.Point, label string) *fu
 func RemainingPoints(b *Board) []geom.Point {
 	remaining := make([]geom.Point, 0, len(b.unfilled))
 	for _, p := range b.all {
-		id := b.encoder(p)
-		if _, ok := b.unfilled[id]; ok {
+		if _, ok := b.unfilled[p]; ok {
 			remaining = append(remaining, p)
 		}
 	}
 	return remaining
 }
 
-func spreadPoints(b *Board, p geom.Point, limit int, accum map[PointId]bool) {
-	ep := b.encoder(p)
+func spreadPoints(b *Board, p geom.Point, limit int, accum map[geom.Point]bool) {
 	if len(accum) < limit {
-		_, ok := b.unfilled[ep]
+		_, ok := b.unfilled[p]
 		if ok {
-			_, ok := accum[ep]
+			_, ok := accum[p]
 			if !ok {
-				accum[ep] = true
+				accum[p] = true
 				for _, d := range directions {
 					spreadPoints(b, b.adder(p, d), limit, accum)
 					if len(accum) >= limit {
@@ -105,17 +96,16 @@ func spreadPoints(b *Board, p geom.Point, limit int, accum map[PointId]bool) {
 }
 
 func CountFill(b *Board, p geom.Point, limit int) int {
-	reached := make(map[PointId]bool)
+	reached := make(map[geom.Point]bool)
 	spreadPoints(b, p, limit, reached)
 	return len(reached)
 }
 
 func NewBoard(points []geom.Point) *Board {
 	return &Board{
-		unfilled: makeSet(points, encodePoint),
-		filled:   make(map[PointId]string),
+		unfilled: makeSet(points),
+		filled:   make(map[geom.Point]string),
 		all:      points,
 		adder:    geom.AddPoints,
-		encoder:  encodePoint,
 	}
 }
