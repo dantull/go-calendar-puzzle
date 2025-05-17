@@ -4,10 +4,23 @@ import (
 	"calendar-puzzle/board"
 	"calendar-puzzle/geom"
 	"calendar-puzzle/solver"
+	"flag"
 	"fmt"
-	"os"
 	"strings"
 )
+
+func parsePoint(arg string) (int, int) {
+	parts := strings.Split(arg, ",")
+	if len(parts) != 2 {
+		fmt.Printf("Invalid point format: %s\n", arg)
+		return 0, 0
+	}
+	x := 0
+	y := 0
+	fmt.Sscanf(parts[0], "%d", &x)
+	fmt.Sscanf(parts[1], "%d", &y)
+	return x, y
+}
 
 func main() {
 	width := 6
@@ -59,7 +72,10 @@ func main() {
 			{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 1, Y: 1}, {X: 1, Y: 2}, {X: 2, Y: 2}}),
 	}
 
-	verbose := len(os.Args) >= 2 && os.Args[1] == "-v"
+	verbose := flag.Bool("v", false, "verbose output")
+	multi := flag.Bool("m", false, "multiple solutions")
+
+	flag.Parse()
 
 	// try to place each shape in position 0, 0
 	for label, shape := range labeledShapes {
@@ -67,7 +83,7 @@ func main() {
 		placed := false
 
 		for _, v := range vs {
-			if verbose {
+			if *verbose {
 				lines := geom.Stringify(v, func(p geom.Point) string {
 					for _, pv := range v {
 						if p == pv {
@@ -95,7 +111,13 @@ func main() {
 		}
 	}
 
-	board.FillPoints(b, []geom.Point{{X: 4, Y: 0}, {X: 3, Y: 3}, {X: 3, Y: 6}}, "X")
+	fills := []geom.Point{}
+	for _, arg := range flag.Args() {
+		x, y := parsePoint(arg)
+		fills = append(fills, geom.Point{X: x, Y: y})
+	}
+
+	board.FillPoints(b, fills, "*")
 	dumpBoard()
 
 	solverStepper := solver.CreateSolver(b, labeledShapes, 4)
@@ -107,8 +129,8 @@ func main() {
 			if event.Kind == "solved" {
 				dumpBoard()
 				fmt.Println("Solved!")
-				done = true
-			} else if verbose {
+				done = !*multi
+			} else if *verbose {
 				dumpBoard()
 				fmt.Printf("Event: %s (%s)\n", event.Kind, event.Label)
 			}
