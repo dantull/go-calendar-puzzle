@@ -43,7 +43,6 @@ func FillPoints(b *Board, ps *[]geom.Point, offset geom.Point, label string) *fu
 
 	for i, p := range *ps {
 		p = geom.AddPoints(p, offset)
-		eps[i] = p
 		if _, ok := b.unfilled[p]; ok {
 			eps[i] = p
 		} else {
