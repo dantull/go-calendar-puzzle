@@ -26,7 +26,9 @@ func parsePoint(arg string) (int, int) {
 }
 
 func main() {
-	var cpuprofile = flag.Bool("c", true, "write cpu profile to file")
+	fmt.Println("Calendar Solver!")
+
+	var cpuprofile = flag.Bool("c", false, "write cpu profile to file")
 
 	if *cpuprofile {
 		f, err := os.Create("profile")
