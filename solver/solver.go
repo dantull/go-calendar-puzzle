@@ -3,6 +3,7 @@ package solver
 import (
 	"calendar-puzzle/board"
 	"calendar-puzzle/geom"
+	"sort"
 )
 
 type ShapeState struct {
@@ -89,6 +90,17 @@ func CreateSolver(b *board.Board, labeledShapes map[string]geom.Shape, minSize i
 		vs := geom.Variants(&s)
 		allVariants[l] = vs
 	}
+
+	sort.Slice(keys, func(i, j int) bool {
+		il := len(allVariants[keys[i]][0])
+		jl := len(allVariants[keys[j]][0])
+
+		if il == jl {
+			return keys[i] > keys[j]
+		} else {
+			return il > jl
+		}
+	})
 
 	var nextShape = func() ShapeState {
 		label := keys[len(stack)]
