@@ -17,7 +17,6 @@ type Board struct {
 	unfilled map[geom.Point]bool
 	filled   map[geom.Point]string
 	all      []geom.Point
-	adder    func(geom.Point, geom.Point) geom.Point
 }
 
 func makeSet(ps []geom.Point) map[geom.Point]bool {
@@ -43,7 +42,7 @@ func FillPoints(b *Board, ps *[]geom.Point, offset geom.Point, label string) *fu
 	eps := make([]geom.Point, len(*ps))
 
 	for i, p := range *ps {
-		p = b.adder(p, offset)
+		p = geom.AddPoints(p, offset)
 		eps[i] = p
 		if _, ok := b.unfilled[p]; ok {
 			eps[i] = p
@@ -79,13 +78,13 @@ func RemainingPoints(b *Board) []geom.Point {
 
 func spreadPoints(b *Board, p geom.Point, limit int, accum map[geom.Point]bool) {
 	if len(accum) < limit {
-		_, ok := b.unfilled[p]
-		if ok {
-			_, ok := accum[p]
-			if !ok {
+		_, ok := accum[p]
+		if !ok {
+			_, ok := b.unfilled[p]
+			if ok {
 				accum[p] = true
 				for _, d := range directions {
-					spreadPoints(b, b.adder(p, d), limit, accum)
+					spreadPoints(b, geom.AddPoints(p, d), limit, accum)
 					if len(accum) >= limit {
 						break
 					}
@@ -106,6 +105,5 @@ func NewBoard(points []geom.Point) *Board {
 		unfilled: makeSet(points),
 		filled:   make(map[geom.Point]string),
 		all:      points,
-		adder:    geom.AddPoints,
 	}
 }
