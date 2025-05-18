@@ -28,10 +28,15 @@ func parsePoint(arg string) (int, int) {
 func main() {
 	fmt.Println("Calendar Solver!")
 
-	var cpuprofile = flag.Bool("c", false, "write cpu profile to file")
+	cpuprofile := flag.String("c", "", "write cpu profile to file")
+	verbose := flag.Bool("v", false, "verbose output")
+	multi := flag.Int("m", 1, "multiple solutions")
 
-	if *cpuprofile {
-		f, err := os.Create("profile")
+	flag.Parse()
+
+	if *cpuprofile != "" {
+		fmt.Printf("opening CPU profile: %s\n", *cpuprofile)
+		f, err := os.Create(*cpuprofile)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -88,11 +93,6 @@ func main() {
 		"Z": *geom.NewShape(true, 1, []geom.Point{
 			{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 1, Y: 1}, {X: 1, Y: 2}, {X: 2, Y: 2}}),
 	}
-
-	verbose := flag.Bool("v", false, "verbose output")
-	multi := flag.Int("m", 1, "multiple solutions")
-
-	flag.Parse()
 
 	origin := geom.Point{X: 0, Y: 0}
 
